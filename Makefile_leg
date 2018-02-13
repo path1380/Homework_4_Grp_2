@@ -1,0 +1,15 @@
+# Makefile for Homework 2
+
+FC = gfortran
+LD = gfortran
+F90FLAGS = -fbounds-check -Wall -fbacktrace -g
+OBJECTS = type_defs.o leg_funs.o test_leg.o
+EXECUTABLE = test_leg.x
+
+.PHONY: clean
+$(EXECUTABLE): $(OBJECTS)
+	$(LD) -o $(EXECUTABLE) $(OBJECTS)
+%.o : %.f90
+	$(FC) $(F90FLAGS) -c $<
+clean:
+	rm -f $(OBJECTS) $(EXECUTABLE)

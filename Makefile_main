@@ -1,0 +1,16 @@
+# Makefile for Homework 2 main file
+
+FC = gfortran
+LD = gfortran
+F90FLAGS = -fbounds-check -Wall -fbacktrace -g
+OBJECTS = type_defs.o quad_1dmod.o leg_funs.o approx_funs.o InputControl.o lgl.o coeff.o main.o
+EXECUTABLE = main.x
+
+.PHONY: clean
+$(EXECUTABLE): $(OBJECTS)
+	$(LD) -o $(EXECUTABLE) $(OBJECTS)
+	./$(EXECUTABLE) >> output.txt
+%.o : %.f90
+	$(FC) $(F90FLAGS) -c $<
+clean:
+	rm -f $(OBJECTS) $(EXECUTABLE) *.mod
