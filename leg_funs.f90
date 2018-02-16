@@ -15,8 +15,8 @@ contains
         ! Inputs: k (highest degree of polynomial), x (coordinate)
         ! Output: 1D Array of Leg. Polynomials degree 0-> k at
         !           location x
-        ! ========================================================
         real(dp), intent(in) :: x
+        ! ========================================================
         integer, intent(in) :: k
         integer :: n
         real(dp), dimension(0:k) :: leg
@@ -86,47 +86,62 @@ contains
         777 continue
     end function jacobiP
 
-function gradjacobiP(k,x,alpha,beta)
-    ! ========================================================
-    ! Calculates first derivative of Jacobi polynomials / Legendre polynomials
-    !        Higher degree derivatives can be changed by altering `degee`
-    !
-    ! NOTE: This vector is smaller than the jacobiP vector by 1
-    !
-    ! Inputs:  k (size of derivative vector)
-    !          x (coordinate), alpha & beta (parameters, assume integers)
-    ! Output: 1D Array of 1st Derivative of Leg. Polynomials degree 0-> k
-    !           at location x
-    ! Refs: https://en.wikipedia.org/wiki/Jacobi_polynomials
-    ! ========================================================
-    real(dp), intent(in) :: x
-    integer, intent(in) :: alpha, beta, k
-    integer, parameter :: degree=1
-    integer :: i, n
-    real(dp) :: gamma1, gamma2
-    real(dp), dimension(1:k) :: gradjacobiP
+    function gradjacobiP(k,x,alpha,beta, jacobi_arr)
+        ! ========================================================
+        ! Calculates first derivative of Jacobi polynomials / Legendre polynomials
+        !        Higher degree derivatives can be changed by altering `degee`
+        !
+        ! NOTE: This vector is smaller than the jacobiP vector by 1
+        !
+        ! Inputs:  k (size of derivative vector)
+        !          x (coordinate), alpha & beta (parameters, assume integers)
+        !          jacobi_arr (calculated as such:
+        !               jacobi_arr = jacobiP(k,x,alpha+degree,beta+degree))
+        ! Output: 1D Array of 1st Derivative of Leg. Polynomials degree 0-> k
+        !           at location x
+        ! Refs: https://en.wikipedia.org/wiki/Jacobi_polynomials
+        ! ========================================================
+        real(dp), intent(in) :: x
+        integer, intent(in) :: alpha, beta, k
+        real(dp), dimension(0:k), intent(in) :: jacobi_arr
+        integer, parameter :: degree=1
+        integer :: i, n
+        real(dp) :: gamma1, gamma2
+        real(dp), dimension(1:k) :: gradjacobiP
 
-    ! Find Jacobi Array
-    jacobi_arr = jacobiP(k,x,alpha,beta)
+        ! Find Jacobi Array
+        ! jacobi_arr = jacobiP(k,x,alpha+degree,beta+degree)
 
-    do n= 1, k
-        ! Calculate gamma in the numerator
-        gamma1 = (alpha+beta+n+1+degree)-1
-        do i=gamma1-1, 1, -1
-            gamma1 = gamma1 * i
+        do n= 1, k
+            ! Calculate gamma in the numerator
+            gamma1 = (alpha+beta+n+1+degree)-1
+            do i=(alpha+beta+n+1+degree)-2, 1, -1  ! gamma1 isn't an int
+                gamma1 = gamma1 * i
+            end do
+
+            ! Calcultte gamma in the denomenator
+            gamma2 = (alpha+beta+n+1)-1
+            do i=(alpha+beta+n+1)-2, 1, -1
+                gamma2 = gamma2 * i
+            end do
+
+            gradjacobiP(n) = gamma1/(2**degree * gamma2) * &
+                                jacobi_arr(n-1)
+
         end do
 
-        ! Calcultte gamma in the denomenator
-        gamma2 = (alpha+beta+n+1)-1
-        do i=gamma2-1, 1, -1
-            gamma2 = gamma2 * i
-        end do
-
-        gradjacobiP(n) = gamma1/(2**degree * gamma2) * &
-                            jacobi_arr(n-1)
-
-    end do
-
-end function gradjacobiP
+    end function gradjacobiP
 
 end module
+
+! ! ###########################################################################
+!
+! module lgdr_derivative
+!     use type_defs
+!     use leg_funs
+!     implicit none
+!     contains
+!
+!
+!
+! end module
