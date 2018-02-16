@@ -48,12 +48,12 @@ contains
         ! Output: 1D Array of 1st Derivative of Leg. Polynomials degree 0-> k
         !           at location x
         ! Refs: JacobiP.m
-        !       http://calvino.polito.it/chqz/errata/pages91-92.pdf
+        !       https://en.wikipedia.org/wiki/Jacobi_polynomials
         ! ========================================================
         real(dp), intent(in) :: x
         integer, intent(in) :: alpha, beta, k
-        integer :: n, j, arg1, arg2, gamma1, gamma2
-        real(dp) :: a1k, a2k, a3k
+        integer :: n
+        real(dp) :: a1n, a2n, a3n
         real(dp), dimension(0:k) :: jacobiP
 
         ! Special cases for low polynomial degrees
@@ -72,33 +72,16 @@ contains
         ! Use recursion for higher polynomial degrees
         jacobiP(0) = 1
         jacobiP(1) = 0.5*((alpha-beta) + (alpha+beta+2)*x)
-        do n=1, k-1
-            ! Pre-calculate gamma values    TODO: Replace this with a fcn
-            arg1 = 2*k+alpha+beta+3      ! Arguements for the gamma fcns
-            arg2 = 2*k+alpha+beta
-
-            gamma1 = arg1-1
-            gamma2 = arg2-1
-            do j = arg1-2, 1, -1      ! First gamma value
-                gamma1 = gamma1 * j
-            end do
-
-            do j = arg2-2, 1, -1      ! Second gamma value
-                gamma2 = gamma2 * j
-            end do
+        do n=2, k
 
             ! Coefficients for next Jacobi
-            ! a1k = 2*(k+1)*(k+alpha+beta+1)*(2*k+alpha+beta)
-            ! a2k = (2*k+alpha+beta+1)*(alpha**2-beta**2) + &
-            !         x*gamma1 / gamma2
-            ! a3k = 2*(k+alpha)*(k+beta)*(2*k+alpha+beta+2)
-            a1k = 2*(n+1)*(n+alpha+beta+1)*(2*n+alpha+beta)
-            a2k = (2*n+alpha+beta+1)*(alpha**2-beta**2) + &
-                    x*gamma1 / gamma2
-            a3k = 2*(n+alpha)*(n+beta)*(2*n+alpha+beta+2)
+            a1n = 2*n*(n+alpha+beta)*(2*n+alpha+beta-2)
+            a2n = (2*n+alpha+beta-1)*&
+                    ((2*n+alpha+beta)*(2*n+alpha+beta-2)*x + alpha**2 - beta**2)
+            a3n = 2*(n+alpha-1)*(n+beta-1)*(2*n+alpha+beta)
 
             ! Next Jacobi value
-            jacobiP(n+1) = (a2k*jacobiP(n) - a3k*jacobiP(n-1)) / a1k
+            jacobiP(n) = (a2n*jacobiP(n-1) - a3n*jacobiP(n-2)) / a1n
         end do
 
         777 continue
