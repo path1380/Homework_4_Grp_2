@@ -39,7 +39,7 @@ contains
         777 CONTINUE
     end function leg
 
-
+! ----------------------------------------------------------------------
 
     function jacobiP(k,x,alpha,beta)
         ! ========================================================
@@ -47,8 +47,7 @@ contains
         !          x (coordinate), alpha & beta (parameters, assume integers)
         ! Output: 1D Array of 1st Derivative of Leg. Polynomials degree 0-> k
         !           at location x
-        ! Refs: JacobiP.m
-        !       https://en.wikipedia.org/wiki/Jacobi_polynomials
+        ! Refs: https://en.wikipedia.org/wiki/Jacobi_polynomials
         ! ========================================================
         real(dp), intent(in) :: x
         integer, intent(in) :: alpha, beta, k
@@ -87,18 +86,47 @@ contains
         777 continue
     end function jacobiP
 
-end module
+function gradjacobiP(k,x,alpha,beta)
+    ! ========================================================
+    ! Calculates first derivative of Jacobi polynomials / Legendre polynomials
+    !        Higher degree derivatives can be changed by altering `degee`
+    !
+    ! NOTE: This vector is smaller than the jacobiP vector by 1
+    !
+    ! Inputs:  k (size of derivative vector)
+    !          x (coordinate), alpha & beta (parameters, assume integers)
+    ! Output: 1D Array of 1st Derivative of Leg. Polynomials degree 0-> k
+    !           at location x
+    ! Refs: https://en.wikipedia.org/wiki/Jacobi_polynomials
+    ! ========================================================
+    real(dp), intent(in) :: x
+    integer, intent(in) :: alpha, beta, k
+    integer, parameter :: degree=1
+    integer :: i, n
+    real(dp) :: gamma1, gamma2
+    real(dp), dimension(1:k) :: gradjacobiP
 
-! module helper_funs
-! ! ================================================================
-! ! Contains functions to help evaluate Legendre polynomials
-! ! ================================================================
-! use type_defs
-! implicit none
-!
-! contains
-!
-!
-! end module
-!
-! ! ---------------------------------------------------------------
+    ! Find Jacobi Array
+    jacobi_arr = jacobiP(k,x,alpha,beta)
+
+    do n= 1, k
+        ! Calculate gamma in the numerator
+        gamma1 = (alpha+beta+n+1+degree)-1
+        do i=gamma1-1, 1, -1
+            gamma1 = gamma1 * i
+        end do
+
+        ! Calcultte gamma in the denomenator
+        gamma2 = (alpha+beta+n+1)-1
+        do i=gamma2-1, 1, -1
+            gamma2 = gamma2 * i
+        end do
+
+        gradjacobiP(n) = gamma1/(2**degree * gamma2) * &
+                            jacobi_arr(n-1)
+
+    end do
+
+end function gradjacobiP
+
+end module
