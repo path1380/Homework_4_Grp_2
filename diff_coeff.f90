@@ -35,10 +35,12 @@ function derivative_coefficients(num_nodes, leg_degree, u_quad)
     integer, intent(in) :: num_nodes, leg_degree 
     type(quad_1d), intent(in) :: u_quad
 
-    real(dp) :: S(0:leg_degree,0:leg_degree)
+    real(dp) :: S(0:leg_degree,0:leg_degree), scaling
 
     real(dp), dimension(0:leg_degree) :: derivative_coefficients, tmp
     integer :: k
+
+    scaling = 2.0_dp/(u_quad%rt_endpt - u_quad%lt_endpt)
 
     !apply S matrix and right endpoint correction
     S = diff_mat(num_nodes, leg_degree, u_quad, 0)
@@ -56,7 +58,7 @@ function derivative_coefficients(num_nodes, leg_degree, u_quad)
     end do
 
     !Invert matrix M to find coefficients
-    derivative_coefficients = tmp(:)*derivative_coefficients(:)
+    derivative_coefficients = scaling*tmp(:)*derivative_coefficients(:)
 
 end function derivative_coefficients
 end module diff_coeff

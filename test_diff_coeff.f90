@@ -5,7 +5,9 @@ program test_diff_coeff
   use diff_coeff
 
   integer, parameter :: num_nodes = 10, leg_degree = 3
+  !real(dp), parameter :: lt_endpt = -ACOS(-1.0_dp), rt_endpt = ACOS(1.0_dp)
   real(dp), parameter :: lt_endpt = -1.0_dp, rt_endpt = 1.0_dp
+
   type(quad_1d) :: u_quad
   real(dp), dimension(0:leg_degree) :: coeffs
 

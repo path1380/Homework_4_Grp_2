@@ -4,7 +4,7 @@ program eig_data
   use mat_builder
   implicit none
 
-  integer, parameter :: leg_degree = DDDD, isConst = 2
+  integer, parameter :: leg_degree = DDDD, isConst = 2, plotType = BBBB
   real(dp), parameter :: lt_endpt = -1.0_dp, rt_endpt = 1.0_dp
   type(quad_1d) :: u_quad
   integer, parameter :: num_nodes = 2*leg_degree + 1, n = leg_degree + 1
@@ -32,7 +32,13 @@ program eig_data
   	temp(i) = SQRT(eigreal(i)**2.0_dp + eigim(i)**2.0_dp)
   end do
 
-   write(*,'(I2.2,ES12.4)') leg_degree, maxval(temp)
+  if(plotType == 0) then
+    write(*,'(I2.2,ES12.4)') leg_degree, maxval(temp)
+  else 
+    do i = 1,n
+      write(*,'(2(ES24.16))') eigreal(i), eigim(i)
+    end do
+  end if
 
   call deallocate_quad1d(u_quad)
 
