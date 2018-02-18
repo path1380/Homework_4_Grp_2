@@ -8,7 +8,7 @@ program eig_data
   real(dp), parameter :: lt_endpt = -1.0_dp, rt_endpt = 1.0_dp
   type(quad_1d) :: u_quad
   integer, parameter :: num_nodes = 2*leg_degree + 1, n = leg_degree + 1
-  integer :: LWORK, INFO, i, j
+  integer :: LWORK, INFO, i
   real(dp) :: A(n,n), eigreal(n), eigim(n), WORK(3*n), temp(n)
   CHARACTER(1) :: lefteig = 'N', righteig = 'N'
 
@@ -26,8 +26,14 @@ program eig_data
 
   A = diff_mat(num_nodes, leg_degree, u_quad, isConst)
   CALL DGEEV(lefteig,righteig, n, A, n, eigreal, eigim, temp, n, temp,n, WORK, LWORK, INFO)
-  write(*,*) eigreal
-  write(*,*) eigim
+
+  !find modulus of each eigenvalue
+  do i =1, n 
+  	temp(i) = SQRT(eigreal(i)**2.0_dp + eigim(i)**2.0_dp)
+  end do
+
+   write(*,'(I2.2,ES12.4)') leg_degree, maxval(temp)
+
   call deallocate_quad1d(u_quad)
 
 end program eig_data
