@@ -37,7 +37,7 @@ function derivative_coefficients(num_nodes, leg_degree, u_quad)
 
     real(dp) :: S(0:leg_degree,0:leg_degree)
 
-    real(dp) :: derivative_coefficients(0:leg_degree)
+    real(dp), dimension(0:leg_degree) :: derivative_coefficients, tmp
     integer :: k
 
     !apply S matrix and right endpoint correction

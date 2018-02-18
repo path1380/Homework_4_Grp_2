@@ -35,7 +35,7 @@ contains
     	integer, intent(in) :: num_nodes, leg_degree, mat_flag
       	type(quad_1d), intent(in) :: u_quad
 
-    	real(dp) :: diff_mat(0:leg_degree,0:leg_degree)
+    	real(dp), dimension(0:leg_degree,0:leg_degree) :: diff_mat
 
     	real(dp), dimension(0:leg_degree) :: leg_poly, leg_der, tmp
       	real(dp), dimension(0:num_nodes-1) :: leg_nodes, leg_weights, coeff_eval
@@ -94,19 +94,21 @@ contains
 	    ELSE IF (mat_flag == 2) THEN
 	    	!periodic case
 	    	!evaluate variable coefficient at endpoints
-	    	endpt_vals = var_coeffs(2,(/u_quad%lt_endpt, u_quad%lt_endpt/))
+	    	endpt_vals = var_coeffs(2,(/u_quad%lt_endpt, u_quad%rt_endpt/))
 
 	    	!evaluate current solution u at the endpoints
 	    	u_endpt_vals = approx_eval(u_quad%lt_endpt,u_quad%rt_endpt,2,(/u_quad%lt_endpt, &
 	    		u_quad%rt_endpt/),leg_degree,u_quad%a(:,u_quad%nvars))
 
 	    	!add correction for right endpoint
-	    	diff_mat(:,:) = -diff_mat(:,:) + endpt_vals(2)*u_endpt_vals(2)
+	    	!diff_mat(:,:) = -1.0_dp*diff_mat(:,:) + endpt_vals(2)*u_endpt_vals(2)
 	    	!add correction based on left endpoint
 	    	do j = 0, leg_degree
 	    		do k = 0, leg_degree
-	    			diff_mat(k,j) = diff_mat(k,j) - endpt_vals(1)*u_endpt_vals(1)*((-1.0_dp)**(dble(k) + dble(j)))
-	    		end do 
+	    			!diff_mat(k,j) = diff_mat(k,j) - endpt_vals(1)*u_endpt_vals(1)*((-1.0_dp)**(dble(k) + dble(j)))
+	
+		    		diff_mat(k,j) = -1.0_dp*diff_mat(k,j) + (-1.0_dp)**(dble(j)) - (-1.0_dp)**(dble(k))
+    		end do 
 	    	end do
 	    end IF
 
