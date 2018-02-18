@@ -16,7 +16,7 @@ contains
 
     !Here replace the string FFFF with the desired function
     !via a perl script
-    function_eval = FFFF
+    function_eval = grd_pts
   end function function_eval
 
 
@@ -34,30 +34,27 @@ contains
     integer, intent(in) :: num_pts
     real(dp), intent(in) :: grd_pts(0:num_pts-1)
     real(dp) :: var_coeffs(0:num_pts-1) 
-    
-    !Here replace the string VVVV with the desired function
-    !via a perl script
 
-    var_coeffs = VVVV   
+    var_coeffs(:) = 1.0_dp   
   end function var_coeffs
 
   subroutine legendre_degrees(degree_vec)
-    integer, parameter :: num_intervals = IIII
+    integer, parameter :: num_intervals = 1
     integer, intent(out) :: degree_vec(num_intervals)
 
-    degree_vec(1:num_intervals) = DDDD
+    degree_vec(1:num_intervals) = 1
   end subroutine legendre_degrees
 
   subroutine domain(grd_pts)
-    integer, parameter :: num_grdpts = NNNN
+    integer, parameter :: num_grdpts = 1
     real(dp), intent(out) :: grd_pts(num_grdpts)
 
-    grd_pts(1:num_grdpts) = PPPP
+    grd_pts(1:num_grdpts) = 1.0_dp
   end subroutine domain
 
   subroutine domain_equispaced(grd_pts)
-    integer, parameter :: num_grdpts = NNNN
-    real(dp), parameter :: lt_endpt = LLLL, rt_endpt = RRRR
+    integer, parameter :: num_grdpts = 2
+    real(dp), parameter :: lt_endpt = 0.0_dp, rt_endpt = 1.0_dp
     real(dp), intent(out) :: grd_pts(num_grdpts)
     integer :: i
 
