@@ -3,7 +3,7 @@ program test_mat_builder
   use quad_1dmod
   use mat_builder
 
-  integer, parameter :: num_nodes = 6, leg_degree = 2, isConst = 0
+  integer, parameter :: num_nodes = 7, leg_degree = 2, isConst = 2
   real(dp), parameter :: lt_endpt = -1.0_dp, rt_endpt = 1.0_dp
   type(quad_1d) :: u_quad
   real(dp) :: A(0:leg_degree, 0:leg_degree)
