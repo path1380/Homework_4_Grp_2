@@ -5,7 +5,7 @@ module quad_1dmod
 
   type quad_1d
      integer :: nvars, q
-     real(kind=dp) :: lt_endpt, rt_endpt
+     real(kind=dp) :: lt_endpt, rt_endpt, lt_trace, rt_trace
      real(kind=dp), allocatable, dimension(:,:) :: a
   end type quad_1d
 
