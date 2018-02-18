@@ -6,14 +6,17 @@
 #
 #
 # Here is the generic file
-$cmdFile="./InputControl.Template3.f90";
+$cmdFile="./InputControl.Template2.f90";
 $outFile="./InputControl.f90";
-$cmdFile2="./main.Template3.f90";
+$cmdFile2="./main.Template2.f90";
 $outFile2="./main.f90";
 
 # Functions to test
 
 @array_f = ("exp( ((grd_pts-2.0_dp)**2.0_dp))", "sin(grd_pts)", "ABS(grd_pts)");
+$lt_endpt = "-1.0_dp";
+$rt_endpt = "1.0_dp";
+$var_coeff = "grd_pts";
 @array_num_grdpts = ("3", "5", "7");
 @array_num_intervals = ("2", "4", "6");
 @array_degrees = ("(/12, 12/)", "(/12,12,12,12/)", "(/12, 12, 12, 12, 12, 12/)");
@@ -43,6 +46,10 @@ for( $r = 0; $r < 30; $r = $r+1){
     $line =~ s/\bIIII\b/$array_num_intervals[$m]/;
     $line =~ s/\bDDDD\b/$array_degrees[$m]/;
     $line =~ s/\bNNNN\b/$array_num_grdpts[$m]/;
+    $line =~ s/\bVVVV\b/$var_coeff/;
+    $line =~ s/\bLLLL\b/$lt_endpt/;
+    $line =~ s/\bRRRR\b/$rt_endpt/;
+
     if ($custom_grd_bool) {
     $line =~ s/\bPPPP\b/$array_grdpts[$m]/;
     } elsif ($eqi_grd_bool) {

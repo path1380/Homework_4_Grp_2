@@ -1,8 +1,10 @@
 #!/usr/apps/bin/perl
 #
-# perl program to try the approximation of various functions
-# in an L2 sense.
-# run with : perl data_collector.p
+# perl program to calculate eigenvalues of the 
+# differential operator from Homework 4. Modify
+# $qmax to set the largest degree Legendre poly
+# used.
+# run with : perl run_eig_data
 #
 #
 # Here is the generic file
@@ -36,5 +38,7 @@ for( $q = 1; $q <= $qmax; $q = $q+1){
 
 }
 system("matlab \"$@\" -nosplash -nodisplay < eig_data_plot.m");
-
+#clean up
+system("rm *.mod *.o eig_data.txt a.out")
+system("rm eig_data.f90")
 exit
