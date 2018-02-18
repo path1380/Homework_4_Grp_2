@@ -6,36 +6,40 @@ module mat_builder
   ! diagonal matrix yields the final A matrix.
 !--------------------------------------------------------------------------------------------------------------
   use type_defs
+  use quad_1dmod
   use InputControl
   use lgl
   use leg_funs
+  use approx_funs
   implicit none
 
 contains
 	
-	function diff_mat(num_nodes, leg_degree, lt_endpt, rt_endpt, isConst)
+	function diff_mat(num_nodes, leg_degree, u_quad, isConst)
       ! ========================================================
       ! Inputs: - num_nodes  : number of nodes used in Gauss  
       !                        quadrature
       !         - leg_degree : highest degree of Legendre poly
       !                        used   
-      !         - lt_endpt   : left endpoint of interval
-      !         - lt_endpt   : right endpoint of interval
-      !			- isConst	 : boolean integer. 1 if constant 
-      !						   coefficient, 0 for variable
+      !         - u_quad     : quad_1d containing information
+      !						   about the solution u in the
+      !						   current interval
+      !			- isConst	 : flag variable. 0 for periodic 
+      !						   variable coefficient, 1 for constant
       !
       ! Output:   2D Array (matrix) A that represents the 
       !			  spatial differentiation operator for the 
       ! 		  transport equation.
       ! ========================================================
     	integer, intent(in) :: num_nodes, leg_degree, isConst
-      	real(dp), intent(in) :: lt_endpt, rt_endpt 
+      	type(quad_1d), intent(in) :: u_quad
+      	!real(dp), intent(in) :: lt_endpt, rt_endpt 
 
     	real(dp) :: diff_mat(0:leg_degree,0:leg_degree)
 
     	real(dp), dimension(0:leg_degree) :: leg_poly, leg_der, tmp
       	real(dp), dimension(0:num_nodes-1) :: leg_nodes, leg_weights
-      	real(dp) :: endpt_vals(2)
+      	real(dp) :: endpt_vals(2), u_endpt_vals(2)
       	integer :: k, j
       	integer, parameter :: alpha = 0, beta = 0
 
@@ -73,15 +77,25 @@ contains
 
 	    !Do appropriate work depending on variable/const coefficient
 	    IF (isConst == 1) THEN
-	    	endpt_vals = var_coeffs(2,(/lt_endpt, rt_endpt/))
+	    	!constant coefficient case
+	    	endpt_vals = var_coeffs(2,(/u_quad%lt_endpt, u_quad%lt_endpt/))
 	    	diff_mat(:,:) = endpt_vals(1)*diff_mat(:,:)
-	    ELSE 
-	    	endpt_vals = var_coeffs(2,(/lt_endpt, rt_endpt/))
-	    	diff_mat(:,:) = -diff_mat(:,:) + endpt_vals(2)
+
+	    ELSE
+	    	!periodic case
+	    	!evaluate variable coefficient at endpoints
+	    	endpt_vals = var_coeffs(2,(/u_quad%lt_endpt, u_quad%lt_endpt/))
+
+	    	!evaluate current solution u at the endpoints
+	    	u_endpt_vals = approx_eval(u_quad%lt_endpt,u_quad%rt_endpt,2,(/u_quad%lt_endpt, &
+	    		u_quad%rt_endpt/),leg_degree,u_quad%a(:,u_quad%nvars))
+
+	    	!add correction for right endpoint
+	    	diff_mat(:,:) = -diff_mat(:,:) + endpt_vals(2)*u_endpt_vals(2)
 	    	!add correction based on left endpoint
 	    	do j = 0, leg_degree
 	    		do k = 0, leg_degree
-	    			diff_mat(k,j) = diff_mat(k,j) - endpt_vals(1)*((-1.0_dp)**(dble(k) + dble(j)))
+	    			diff_mat(k,j) = diff_mat(k,j) - endpt_vals(1)*u_endpt_vals(1)*((-1.0_dp)**(dble(k) + dble(j)))
 	    		end do 
 	    	end do
 	    end IF
