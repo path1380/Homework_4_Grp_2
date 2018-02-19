@@ -24,8 +24,8 @@ for i = 1:length(eig_vec)
 end 
 axis_width = max(evals(:,2));
 set(gca,'fontsize',18);
-xlabel('Maximal Legendre Polynomial Degree')
-ylabel('$\lambda$','interpreter','latex')
+ylabel('$Im(\lambda)$','interpreter','latex')
+xlabel('$Re(\lambda)$','interpreter','latex')
 ylim([-axis_width,axis_width])
 xlim([-1,1])
 title('Eigenvalues of Differential Operator','Interpreter','latex')
