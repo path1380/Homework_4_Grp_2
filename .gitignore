@@ -3,3 +3,4 @@
 *.mod
 *.txt
 bin/*
+*InputControl.f90

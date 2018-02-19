@@ -52,7 +52,7 @@ contains
     integer, parameter :: num_grdpts = 5
     real(dp), intent(out) :: grd_pts(num_grdpts)
 
-    grd_pts(1:num_grdpts) = (/0.0_dp, 2.32094706996326_dp, 4.86628296508794_dp, 4.87634993340104_dp, 3.0_dp/)
+    grd_pts(1:num_grdpts) = (/0.0_dp, 4.68842519045324_dp, 5.82080955031203_dp, 3.52375392981555_dp, 3.0_dp/)
   end subroutine domain
 
   subroutine domain_equispaced(grd_pts)
