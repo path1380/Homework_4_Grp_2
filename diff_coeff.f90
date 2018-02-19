@@ -108,6 +108,6 @@ function derivative_matrix(num_nodes, leg_degree, u_quad)
     !Invert matrix M to find coefficients
     derivative_matrix(:,:) = scaling*derivative_matrix(:,:)
 
-end function
+end function derivative_matrix
 
 end module diff_coeff
