@@ -9,15 +9,15 @@ module InputControl
 
 contains
 
-  function function_eval(num_pts, grd_pts)
-    integer, intent(in) :: num_pts
-    real(dp), intent(in) :: grd_pts(0:num_pts-1)
-    real(dp) :: function_eval(0:num_pts-1)
+!  function function_eval(num_pts, grd_pts)
+!    integer, intent(in) :: num_pts
+!    real(dp), intent(in) :: grd_pts(0:num_pts-1)
+!    real(dp) :: function_eval(0:num_pts-1)
 
     !Here replace the string FFFF with the desired function
     !via a perl script
-    function_eval = FFFF
-  end function function_eval
+!    function_eval = FFFF
+!  end function function_eval
 
 
   function var_coeffs(num_pts, grd_pts)
@@ -48,26 +48,26 @@ contains
     degree_vec(1:num_intervals) = DDDD
   end subroutine legendre_degrees
 
-  subroutine domain(grd_pts)
-    integer, parameter :: num_grdpts = NNNN
-    real(dp), intent(out) :: grd_pts(num_grdpts)
+!  subroutine domain(grd_pts)
+!    integer, parameter :: num_grdpts = NNNN
+!    real(dp), intent(out) :: grd_pts(num_grdpts)
+!
+!    grd_pts(1:num_grdpts) = PPPP
+!  end subroutine domain
 
-    grd_pts(1:num_grdpts) = PPPP
-  end subroutine domain
+!  subroutine domain_equispaced(grd_pts)
+!    integer, parameter :: num_grdpts = NNNN
+!    real(dp), parameter :: lt_endpt = LLLL, rt_endpt = RRRR
+!    real(dp), intent(out) :: grd_pts(num_grdpts)
+!    integer :: i
 
-  subroutine domain_equispaced(grd_pts)
-    integer, parameter :: num_grdpts = NNNN
-    real(dp), parameter :: lt_endpt = LLLL, rt_endpt = RRRR
-    real(dp), intent(out) :: grd_pts(num_grdpts)
-    integer :: i
+!    grd_pts(1) = lt_endpt
 
-    grd_pts(1) = lt_endpt
+!    do i=2,num_grdpts
+!      grd_pts(i) = lt_endpt + (i-1)*(rt_endpt - lt_endpt)/(num_grdpts - 1)
+!    end do
 
-    do i=2,num_grdpts
-      grd_pts(i) = lt_endpt + (i-1)*(rt_endpt - lt_endpt)/(num_grdpts - 1)
-    end do
-
-  end subroutine domain_equispaced
+!  end subroutine domain_equispaced
 
   subroutine delete_quad(num_quads, quad_array)
     integer, intent(in) :: num_quads
@@ -78,5 +78,12 @@ contains
       call deallocate_quad1d(quad_array(i))
     end do
   end subroutine delete_quad
+
+  function Initial_condition(num_grdpts, grdpts)
+    integer, intent(in) :: num_grdpts
+    real(dp), intent(in) :: grdpts(0:num_grdpts-1)
+    real(dp) :: Initial_condition(0:num_grdpts-1)
+    Initial_condition = ICIC
+  end function Initial_condition
   
 end module InputControl

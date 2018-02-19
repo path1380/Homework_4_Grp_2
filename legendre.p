@@ -28,6 +28,7 @@ $noisy_eqi_grid_bool = 1;  # 1 = add noise to equidist grid points
 #$noise_range = 0.05;       # Noise will be at most $noise_range * interval
 $noise_range = 0;       # Noise will be at most $noise_range * interval
 @array_num_subsamples = ("15", "15", "15");
+$IC = "EXP(-((grdpts/10)**2))";
 
 for( $r = 0; $r < 30; $r = $r+1){
     $noise_range = $noise_range + $r*0.01;
@@ -49,6 +50,7 @@ for( $r = 0; $r < 30; $r = $r+1){
     $line =~ s/\bVVVV\b/$var_coeff/;
     $line =~ s/\bLLLL\b/$lt_endpt/;
     $line =~ s/\bRRRR\b/$rt_endpt/;
+    $line =~ s/\bICIC\b/$IC/;
 
     if ($custom_grd_bool) {
     $line =~ s/\bPPPP\b/$array_grdpts[$m]/;
