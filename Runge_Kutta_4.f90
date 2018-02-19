@@ -39,9 +39,3 @@ contains
     RK4=u
   end function RK4
 end module Runge_Kutta_4
-
-    
-    
-    
-    
-    
