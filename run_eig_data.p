@@ -47,8 +47,7 @@ for ($b = 0; $b <=1; $b = $b+1){
 
 	}
 }
-$cwd = qx(pwd);
-system("export MATLABPATH=$cwd");
+
 system("matlab \"$@\" -nosplash -nodisplay < bin/eig_data_plot.m");
 
 exit

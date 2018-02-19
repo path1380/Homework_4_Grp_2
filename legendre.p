@@ -6,9 +6,9 @@
 #
 #
 # Here is the generic file
-$cmdFile="templates/InputControl.Template2.f90";
+$cmdFile="templates/InputControl.Template.f90";
 $outFile="src/InputControl.f90";
-$cmdFile2="templates/main.Template2.f90";
+$cmdFile2="templates/main.Template.f90";
 $outFile2="src/main.f90";
 
 # Functions to test

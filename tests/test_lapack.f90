@@ -1,6 +1,6 @@
 program lapack_test
 	use type_defs
-	implicit none 
+	implicit none
 
 	integer, parameter :: n = 10
 	integer :: LWORK, INFO, i, j

@@ -2,7 +2,15 @@
 *.x
 *.mod
 *.txt
+
 bin/*
+data/*
+media/*
+
+# Specific cases of template files
 *InputControl.f90
 *main.f90
 *eig_data.f90
+*InputSolve.f90
+*test_solver.f90
+*solver.f90
