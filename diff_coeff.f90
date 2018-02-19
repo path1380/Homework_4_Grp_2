@@ -93,7 +93,7 @@ function derivative_matrix(num_nodes, leg_degree, u_quad)
     !add left endpoint correction
     do j=0, leg_degree
       do i=0,leg_degree
-        derivative_matrix(i,j) =  derivative_matrix(i,j) + u_quad%lt_trace*((-1.0_dp)**(dble(i + j)))
+        derivative_matrix(i,j) =  derivative_matrix(i,j) - u_quad%lt_trace*((-1.0_dp)**(dble(i + j)))
       end do
     end do
 
