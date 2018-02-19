@@ -7,9 +7,9 @@
 #
 # Here is the generic file
 $cmdFile="templates/InputControl.Template2.f90";
-$outFile="bin/InputControl.f90";
+$outFile="src/InputControl.f90";
 $cmdFile2="templates/main.Template2.f90";
-$outFile2="bin/main.f90";
+$outFile2="src/main.f90";
 
 # Functions to test
 
@@ -109,7 +109,7 @@ for( $r = 0; $r < 30; $r = $r+1){
     system("make -f Makefile_main");
     # #system("./a.out > tmp.txt");
 
-    open(FILE,"output.txt") || die "cannot open file" ;
+    open(FILE,"data/output.txt") || die "cannot open file" ;
     # # Setup the outfile based on the template
     # # read one line at a time.
      while( $line = <FILE> )
@@ -127,7 +127,6 @@ for( $r = 0; $r < 30; $r = $r+1){
 
 }
 }
-rename("output.txt", "output_rand.txt") || die ( "Error in renaming" );
+rename("data/output.txt", "data/output_rand.txt") || die ( "Error in renaming" );
 system("matlab \"$@\" -nosplash -nodisplay < randPlot.m");
-system("rm output_rand.txt");
 exit

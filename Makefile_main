@@ -1,20 +1,22 @@
 # Makefile for Homework 4 main file
 
-SRC = src/
-OBJ = obj/
-BIN = bin/
+SRCDIR = src
+BUILDDIR = build
+BINDIR = bin
+DATADIR = data
 
 FC = gfortran
 LD = gfortran
 F90FLAGS = -fbounds-check -Wall -fbacktrace -g
 OBJECTS = type_defs.o quad_1dmod.o leg_funs.o approx_funs.o InputControl.o lgl.o coeff.o main.o
+OBJ_AND_DIR = $(OBJECTS:%.o=$(BUILDDIR)/%.o)
 EXECUTABLE = main.x
 
 .PHONY: clean
 $(EXECUTABLE): $(OBJECTS)
-	$(LD) -o $(EXECUTABLE) $(OBJECTS)
-	./$(EXECUTABLE) >> output.txt
-%.o : %.f90
-	$(FC) $(F90FLAGS) -c $<
+	@echo "$(LD) -o $(BINDIR)/$(EXECUTABLE) $(OBJ_AND_DIR)"; $(LD) -o $(BINDIR)/$(EXECUTABLE) $(OBJ_AND_DIR)
+	$(BINDIR)/$(EXECUTABLE) >> $(DATADIR)/output.txt
+%.o : $(SRCDIR)/%.f90
+	@echo "$(FC) -J$(BUILDDIR) $(F90FLAGS) -c $< -o $(BUILDDIR)/$@"; $(FC) -J$(BUILDDIR) $(F90FLAGS) -c $< -o $(BUILDDIR)/$@
 clean:
-	rm -f $(OBJECTS) $(EXECUTABLE) *.mod
+	rm -f $(OBJ_AND_DIR) $(BINDIR)/$(EXECUTABLE)
