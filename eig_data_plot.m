@@ -1,4 +1,4 @@
-x = load('eig_data.txt');
+x = load('data/eig_data.txt');
 plot(x(:,1),x(:,2),'*-', 'linewidth',2);
 hold on
 plot(x(:,1),0.5*x(:,1).*(x(:,1)+1),'r-', 'linewidth',1.5)
@@ -15,13 +15,13 @@ eig_vec = 1:7;
 colorVec = hsv(length(eig_vec));
 figure(2)
 for i = 1:length(eig_vec)
-    str = 'eig_';
+    str = '../data/eig_';
     str = strcat(str,num2str(i),'.txt');
     evals = load(str);
     plot(evals(:,1) + 1i*evals(:,2),'*','Color',colorVec(i,:),'linewidth',1.5);
     hold on
     legendInfo{i} = ['q = ' num2str(i)];
-end 
+end
 axis_width = max(evals(:,2));
 set(gca,'fontsize',18);
 xlabel('Maximal Legendre Polynomial Degree')

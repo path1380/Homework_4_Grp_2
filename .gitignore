@@ -4,3 +4,5 @@
 *.txt
 bin/*
 *InputControl.f90
+*main.f90
+*eig_data.f90

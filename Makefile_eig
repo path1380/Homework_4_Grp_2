@@ -1,0 +1,23 @@
+# Makefile for Homework 4 run_eig_data.p
+
+SRCDIR = src
+BUILDDIR = build
+BINDIR = bin
+DATADIR = data
+
+FC = gfortran
+LD = gfortran
+LDFLAGS = -llapack -lblas
+F90FLAGS = -fbounds-check -Wall -fbacktrace -g
+OBJECTS = type_defs.o quad_1dmod.o InputControl.o lgl.o leg_funs.o approx_funs.o mat_builder.o eig_data.o
+OBJ_AND_DIR = $(OBJECTS:%.o=$(BUILDDIR)/%.o)
+EXECUTABLE = eig_data.x
+
+#.PHONY: clean
+$(EXECUTABLE): $(OBJECTS)
+	$(LD) -o $(BINDIR)/$(EXECUTABLE) $(OBJ_AND_DIR) $(LDFLAGS)
+	$(BINDIR)/$(EXECUTABLE) >> $(DATADIR)/output.txt
+%.o : $(SRCDIR)/%.f90
+	@echo "$(FC) -J$(BUILDDIR) $(F90FLAGS) -c $< -o $(BUILDDIR)/$@"; $(FC) -J$(BUILDDIR) $(F90FLAGS) -c $< -o $(BUILDDIR)/$@
+#clean:
+#	rm -f $(OBJ_AND_DIR) $(BINDIR)/$(EXECUTABLE)
