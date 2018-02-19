@@ -6,10 +6,10 @@
 #
 #
 # Here is the generic file
-$cmdFile="./InputControl.Template2.f90";
-$outFile="./InputControl.f90";
-$cmdFile2="./main.Template2.f90";
-$outFile2="./main.f90";
+$cmdFile="templates/InputControl.Template2.f90";
+$outFile="bin/InputControl.f90";
+$cmdFile2="templates/main.Template2.f90";
+$outFile2="bin/main.f90";
 
 # Functions to test
 
@@ -85,7 +85,7 @@ for( $r = 0; $r < 30; $r = $r+1){
     close( OUTFILE );
     close( FILE );
 
-    open(FILE,"$cmdFile2") || die "cannot open file $cmdFile!" ;
+    open(FILE,"$cmdFile2") || die "cannot open file $cmdFile2!" ;
     open(OUTFILE,"> $outFile2") || die "cannot open file!" ;
 
     # Setup the outfile based on the template

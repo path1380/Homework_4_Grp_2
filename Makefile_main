@@ -1,4 +1,8 @@
-# Makefile for Homework 2 main file
+# Makefile for Homework 4 main file
+
+SRC = src/
+OBJ = obj/
+BIN = bin/
 
 FC = gfortran
 LD = gfortran
