@@ -9,15 +9,15 @@ module InputControl
 
 contains
 
-!  function function_eval(num_pts, grd_pts)
-!    integer, intent(in) :: num_pts
-!    real(dp), intent(in) :: grd_pts(0:num_pts-1)
-!    real(dp) :: function_eval(0:num_pts-1)
+  function function_eval(num_pts, grd_pts)
+    integer, intent(in) :: num_pts
+    real(dp), intent(in) :: grd_pts(0:num_pts-1)
+    real(dp) :: function_eval(0:num_pts-1)
 
-    !Here replace the string FFFF with the desired function
+   !Here replace the string FFFF with the desired function
     !via a perl script
-!    function_eval = FFFF
-!  end function function_eval
+    function_eval = FFFF
+  end function function_eval
 
 
   function var_coeffs(num_pts, grd_pts)
@@ -79,11 +79,11 @@ contains
     end do
   end subroutine delete_quad
 
-  function Initial_condition(num_grdpts, grdpts)
-    integer, intent(in) :: num_grdpts
-    real(dp), intent(in) :: grdpts(0:num_grdpts-1)
-    real(dp) :: Initial_condition(0:num_grdpts-1)
-    Initial_condition = ICIC
-  end function Initial_condition
+!  function Initial_condition(num_grdpts, grdpts)
+!    integer, intent(in) :: num_grdpts
+!    real(dp), intent(in) :: grdpts(0:num_grdpts-1)
+!    real(dp) :: Initial_condition(0:num_grdpts-1)
+!    Initial_condition = ICIC
+!  end function Initial_condition
   
 end module InputControl

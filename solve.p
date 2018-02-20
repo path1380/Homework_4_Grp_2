@@ -13,7 +13,7 @@ $degree = "5";
 $delta_t="0.0002";
 $end_time="0.1";
 
-$IC = "EXP(-((grdpts/0.3)**2))";
+$IC = "EXP(-((grd_pts/0.3)**2))";
 open(FILE,"$cmdFile") || die "cannot open file $cmdFile!" ;
   
    open(OUTFILE,"> $outFile") || die "cannot open file!" ;
@@ -22,7 +22,7 @@ open(FILE,"$cmdFile") || die "cannot open file $cmdFile!" ;
 #Replace the strings by using substitution
     $line =~ s/\bIIII\b/$num_intervals/;
     $line =~ s/\bDDDD\b/$degree/;
-    $line =~ s/\bICIC\b/$IC/;
+    $line =~ s/\bFFFF\b/$IC/;
     $line =~ s/\bVVVV\b/$var_coeff/;
 
     print OUTFILE $line;
@@ -37,7 +37,8 @@ open(FILE,"$cmdFile2") || die "cannot open file $cmdFile2!" ;
     $line =~ s/\bTTTT\b/$end_time/;
     $line =~ s/\bDTDT\b/$delta_t/;
     $line =~ s/\bDDDD\b/$degree/;
-
+    $line =~ s/\bLLLL\b/$lt_endpt/;
+    $line =~ s/\bRRRR\b/$rt_endpt/;
     print OUTFILE $line;
     }
        close( OUTFILE );
