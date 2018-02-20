@@ -13,7 +13,7 @@ module coeff
 contains
 
 
-  function element(lt_endpt,rt_endpt,leg_degree)
+    function element(lt_endpt,rt_endpt,leg_degree)
       ! ========================================================
       ! Inputs: - lt_endpt   : location of the left endpoint of 
       !                        the given sub-interval

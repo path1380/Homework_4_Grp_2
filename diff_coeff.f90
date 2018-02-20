@@ -44,7 +44,7 @@ function derivative_coefficients(num_nodes, leg_degree, u_quad)
 
     !apply S matrix and right endpoint correction
     S = diff_mat(num_nodes, leg_degree, u_quad, 0)
-    derivative_coefficients(:) = MATMUL(-1.0_dp*S,u_quad%a(:,1))
+    derivative_coefficients(:) = MATMUL(-1.0_dp*TRANSPOSE(S),u_quad%a(:,1))
     derivative_coefficients(:) = derivative_coefficients(:) + u_quad%rt_trace
 
     !apply left endpt correction

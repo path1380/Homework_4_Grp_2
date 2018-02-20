@@ -14,7 +14,7 @@ program test_approx_funs
 
     implicit none
 
-    integer, parameter :: leg_degree = 12, num_grdpts = 10
+    integer, parameter :: leg_degree = 12, num_grdpts = 100
     real(dp), parameter ::  rt_endpt = 0.3_dp, lt_endpt = -0.2_dp
     real(dp), dimension(num_grdpts) :: grdpts 
     real(dp), dimension(0:leg_degree) :: leg_coeffs
@@ -34,8 +34,10 @@ program test_approx_funs
     approx = approx_eval(lt_endpt, rt_endpt,num_grdpts,grdpts,leg_degree,element1%a(:,element1%nvars))
    
     !Here we modify InputControl.f90 and copy that function here
-    true_solution = SIN(grdpts)
-
+    !true_solution = SIN(grdpts)
+    do j=1,num_grdpts
+        true_solution(j) = 1.0_dp
+    end do
     !output the error in the uniform (infinity) norm of approximation
     write(*,*) MAXVAL(ABS(true_solution - approx))
 end program test_approx_funs

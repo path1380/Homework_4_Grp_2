@@ -35,6 +35,7 @@ contains
         !Calculate scaling and shift needed by affine map
         !Here we must map the given interval back to [-1,1]
         scaling = 1.0_dp/(rt_endpt - lt_endpt)
+
         shift = (rt_endpt + lt_endpt)
 
         do n = 1, num_grdpts

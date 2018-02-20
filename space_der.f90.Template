@@ -14,101 +14,50 @@ program space_der
   use approx_funs
   use mat_builder
   use diff_coeff
+  use coeff
 
   implicit none
-  integer, parameter :: leg_degree = DDDD
+  integer, parameter :: leg_degree = DDDD, num_grdpts = NNNN 
   real(dp), parameter :: lt_endpt = LLLL, rt_endpt = RRRR
-  real(dp), dimension(0:leg_degree) :: coeffs
-  real(dp) :: endpt_vals(2), u_endpt_vals(2)
+ 
+  real(dp), dimension(0:leg_degree) :: coeffs, approx_coeff
+  real(dp), dimension(num_grdpts) :: sample_nodes, approx_deriv, true_der
+  real(dp) :: endpt_vals(2), u_endpt_vals(2), stepsize
   type(quad_1d) :: u_quad
-  integer :: num_nodes = CEILING(1.5_dp*(dble(leg_degree) +1))
-
-  !define a quad for the function u
-  u_quad%nvars = 1
-  u_quad%lt_endpt = lt_endpt
-  u_quad%rt_endpt = rt_endpt
-  u_quad%q = leg_degree
-  call allocate_quad1d(u_quad)
+  integer :: num_nodes = CEILING(1.5_dp*(dble(leg_degree) +1.0_dp)), j
 
   !build Legendre coefficients for u
-  u_quad%a(:,1) = element(lt_endpt,rt_endpt,leg_degree)
+  u_quad = element(lt_endpt,rt_endpt,leg_degree)
+  u_quad%nvars = 1
 
   !evaluate variable coefficient at endpoints
-  endpt_vals = var_coeffs(2,(lt_endpt, rt_endpt))
+  endpt_vals = var_coeffs(2,(/lt_endpt, rt_endpt/))
 
   !evaluate approximate u at endpoints of interval
-  u_endpt_vals = approx_eval(lt_endpt,rt_endpt,2,(/lt_endpt, &
-                             rt_endpt/),leg_degree,u_quad%a(:,u_quad%nvars))
+
+  u_endpt_vals = function_eval(2,(/lt_endpt, rt_endpt/))
 
   !set trace values
   u_quad%lt_trace = endpt_vals(1)*u_endpt_vals(1)
   u_quad%rt_trace = endpt_vals(2)*u_endpt_vals(2)
 
+
   !take the spatial derivative 
   coeffs = derivative_coefficients(num_nodes, leg_degree, u_quad)
-  call deallocate_quad1d(u_quad)
 
-  !------------------------------------------------------------------!
-  !Here we have so far written code to compute the coefficients of the 
-  !spatial derivative term. Now we need to evaluate the result on 
-  !an equispaced grid and compare with the true derivative! Here
-  !We'll write it in explicitly because I'm lazy and don't want to 
-  !add a (generally) useless function in InputControl.
-  !------------------------------------------------------------------!
-
-  write(*,*) coeffs
-
-  integer :: degree_vec(num_grdpts - 1), num_nodes
-  real(dp) :: grdpts(num_grdpts), sample_nodes(num_nodes), function_vals(num_nodes)
-  real(dp) :: lt_endpt, rt_endpt, stepsize
-  real(dp), dimension(num_grdpts -1) :: unif_err, L2_err
-  type(quad_1d), dimension(1:num_grdpts-1) :: interval_info, approximation
-  integer :: i, j
-
-  !Grab grid information from InputControl
-  call domain_equispaced(grdpts)
-  call legendre_degrees(degree_vec)
-
-  !Compute coefficients and approximation on each interval
-  do i = 1,num_grdpts-1
-    lt_endpt = grdpts(i)
-    rt_endpt = grdpts(i+1)
-
-    !get coefficients in the current interval
-    interval_info(i)%lt_endpt = lt_endpt
-    interval_info(i)%rt_endpt = rt_endpt
-    interval_info(i)%q = degree_vec(i)
-    interval_info(i)%nvars = 1
-    call allocate_quad1d(interval_info(i))
-    interval_info(i) = element(lt_endpt,rt_endpt,degree_vec(i))
-
-    !build approximation
-    approximation(i)%lt_endpt = lt_endpt
-    approximation(i)%rt_endpt = rt_endpt
-    approximation(i)%q = num_nodes - 1
-    approximation(i)%nvars = 1
-    call allocate_quad1d(approximation(i))
-
-    stepsize = (rt_endpt - lt_endpt)/dble(num_nodes + 1)
-    do j=1,num_nodes
-      sample_nodes(j) = lt_endpt + j*stepsize
-    end do
-
-    !create array of function values at each sample node (for error calculations)
-    function_vals = function_eval(num_nodes, sample_nodes)
-
-
-    !evaluate at a new set of gridpoints
-     approximation(i)%a(:,1) = approx_eval(lt_endpt,rt_endpt,num_nodes,sample_nodes,degree_vec(i),interval_info(i)%a(:,1))
-     unif_err(i) = MAXVAL(ABS(approximation(i)%a(:,1) - function_vals))
-     L2_err(i) = NORM2(approximation(i)%a(:,1) - function_vals)
+  !build equispaced grid to evaluate derivative
+  stepsize = (rt_endpt - lt_endpt)/dble(num_grdpts + 1)
+  do j=1,num_grdpts
+    sample_nodes(j) = lt_endpt + j*stepsize
   end do
 
-  !print errors out to terminal
-  write(*,'(2(E24.16))') maxval(unif_err), maxval(L2_err)
-
-  !Deallocate all used memory
-  call delete_quad(num_grdpts-1, interval_info)
-  call delete_quad(num_grdpts-1, approximation)
+  !evaluate derivative on equispaced grid
+  approx_deriv = approx_eval(lt_endpt,rt_endpt,num_grdpts,sample_nodes,leg_degree,coeffs)
+  do j = 1,num_grdpts
+    true_der(j) = 2.0_dp*EXP(SIN(sample_nodes(j)))*COS(sample_nodes(j))*(1+SIN(sample_nodes(j)))
+    true_der(j) = true_der(j)/((2.0_dp + SIN(sample_nodes(j)))**2.0_dp)
+  end do
+  write(*,'((E24.16))') maxval(ABS(approx_deriv-true_der))
+  call deallocate_quad1d(u_quad)
 
 end program space_der

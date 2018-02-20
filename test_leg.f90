@@ -7,7 +7,7 @@ program test_leg
     use leg_funs
     implicit none
 
-    integer, parameter :: q = 4, alpha = 0, beta = 0, n = 10
+    integer, parameter :: q = 4, alpha = 0, beta = 0, n = 1000
     real(dp) :: x(0:n-1), stepsize, poly(0:q), polyder(0:q), errvec(0:n), trueder(0:q)
     integer :: i
     real(dp), dimension(0:q) :: leg_arr
@@ -35,5 +35,6 @@ program test_leg
     end do
 
     write(*,*) MAXVAL(errvec)
+
 
 end program test_leg
