@@ -17,9 +17,8 @@ program space_der
   use coeff
 
   implicit none
-  integer, parameter :: leg_degree = DDDD, num_grdpts = NNNN 
+  integer, parameter :: leg_degree = DDDD, num_grdpts = NNNN,isConst = CCCC
   real(dp), parameter :: lt_endpt = LLLL, rt_endpt = RRRR
- 
   real(dp), dimension(0:leg_degree) :: coeffs, approx_coeff
   real(dp), dimension(num_grdpts) :: sample_nodes, approx_deriv, true_der
   real(dp) :: endpt_vals(2), u_endpt_vals(2), stepsize
@@ -43,20 +42,32 @@ program space_der
 
 
   !take the spatial derivative 
-  coeffs = derivative_coefficients(num_nodes, leg_degree, u_quad)
+  coeffs = derivative_coefficients(num_nodes, leg_degree, u_quad, isConst)
+  !coeffs = -1.0_dp*coeffs
 
   !build equispaced grid to evaluate derivative
   stepsize = (rt_endpt - lt_endpt)/dble(num_grdpts + 1)
   do j=1,num_grdpts
     sample_nodes(j) = lt_endpt + j*stepsize
   end do
-
+  
   !evaluate derivative on equispaced grid
   approx_deriv = approx_eval(lt_endpt,rt_endpt,num_grdpts,sample_nodes,leg_degree,coeffs)
-  do j = 1,num_grdpts
-    true_der(j) = 2.0_dp*EXP(SIN(sample_nodes(j)))*COS(sample_nodes(j))*(1+SIN(sample_nodes(j)))
-    true_der(j) = true_der(j)/((2.0_dp + SIN(sample_nodes(j)))**2.0_dp)
-  end do
+
+  if(isConst == 1) then
+    do j = 1,num_grdpts
+      true_der(j) = 2.0_dp*EXP(SIN(sample_nodes(j)))*COS(sample_nodes(j))*(1+SIN(sample_nodes(j)))
+      true_der(j) = true_der(j)/((2.0_dp + SIN(sample_nodes(j)))**2.0_dp)
+    end do
+  else 
+    do j = 1,num_grdpts
+      !----------------------------------------------------------------------!
+      !CHANGE THIS AND UPDATE WITH THE PROPER DERIVATIVE FUNCTION
+      !----------------------------------------------------------------------!
+      true_der(j) = 5.0_dp*EXP(sample_nodes(j)) - 15.0_dp*SIN(sample_nodes(j))
+    end do
+  endif
+
   write(*,'((E24.16))') maxval(ABS(approx_deriv-true_der))
   call deallocate_quad1d(u_quad)
 

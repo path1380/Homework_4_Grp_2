@@ -13,14 +13,30 @@ $outFile="./space_der.f90";
 $cmdFile2="./InputControl.Template2.f90";
 $outFile2="./InputControl.f90";
 
-$qmax = 80; #maximum legendre degree to use
+$qmax = 50; #maximum legendre degree to use
 $num_grdpts = 100;
+@array_f = ("exp( ((grd_pts-2.0_dp)**2.0_dp))", "sin(grd_pts)", "ABS(grd_pts)");
+$isConst = "0";
+
+#$var_coeff = "2.0_dp/(2.0_dp + SIN(grd_pts))";
+
+#------------------------------------------------------------#
+#HERE CHANGE VAR_COEFF TO MODIFY THE CONSTANT COEFFICIENT
+#MODIFY FUNC WITH THE FUNCTION YOU WANT TO TAKE A DERIVATIVE OF
+#(NOTE: PASS grd_pts as the function value)
+#CHANGE lt_endpt, rt_endpt TO CHANGE THE ENDPOINTS YOU'RE SOLVING ON
+#(IF YOU WANT TO SWITCH IT UP)
+#NOTE2: CJAMGE THE space_der.f90.Template FILE TO ADD THE DERIVATIVE 
+#FOR ERROR PLOTS
+#------------------------------------------------------------#
+
+$var_coeff = "5.0_dp";
+$func = "EXP(grd_pts) + 3.0_dp*COS(grd_pts)";
 $lt_endpt = "-1.0_dp*ACOS(-1.0_dp)";
 $rt_endpt = "ACOS(-1.0_dp)";
-@array_f = ("exp( ((grd_pts-2.0_dp)**2.0_dp))", "sin(grd_pts)", "ABS(grd_pts)");
 
-$var_coeff = "2.0_dp/(2.0_dp + SIN(grd_pts))";
-$func = "EXP(SIN(grd_pts))";
+
+#$func = "EXP(SIN(grd_pts))";
 @array_num_grdpts = ("3", "5", "7");
 @array_num_intervals = ("2", "4", "6");
 @array_degrees = ("(/12, 12/)", "(/12,12,12,12/)", "(/12, 12, 12, 12, 12, 12/)");
@@ -44,6 +60,8 @@ for( $q = 1; $q <= $qmax; $q = $q+1){
 		$line =~ s/\bLLLL\b/$lt_endpt/;
 		$line =~ s/\bNNNN\b/$num_grdpts/;
 		$line =~ s/\bRRRR\b/$rt_endpt/;
+		$line =~ s/\bCCCC\b/$isConst/;
+
 		print OUTFILE $line;
 	}
 
@@ -81,8 +99,8 @@ for( $q = 1; $q <= $qmax; $q = $q+1){
 	system("gfortran space_der.f90 type_defs.o quad_1dmod.o InputControl.o lgl.o leg_funs.o approx_funs.o mat_builder.o diff_coeff.o coeff.o");
 	system("./a.out >> space_der.txt");
 }
-system("matlab \"$@\" -nosplash -nodisplay < space_der_plot.m");
+#system("matlab \"$@\" -nosplash -nodisplay < space_der_plot.m");
 #clean up
-system("rm *.mod *.o a.out");
-system("rm space_der.txt");
+#system("rm *.mod *.o a.out");
+#system("rm space_der.txt");
 exit
