@@ -18,7 +18,7 @@ module diff_coeff
 
 contains
 
-function derivative_coefficients(num_nodes, leg_degree, u_quad)
+function derivative_coefficients(num_nodes, leg_degree, u_quad, isConst)
       ! ========================================================
       ! Inputs: - num_nodes  : number of nodes used in Gauss  
       !                        quadrature
@@ -32,25 +32,31 @@ function derivative_coefficients(num_nodes, leg_degree, u_quad)
       !			  the derivative of the solution u for the 
       ! 		  transport equation.
       ! ========================================================
-    integer, intent(in) :: num_nodes, leg_degree 
+    integer, intent(in) :: num_nodes, leg_degree, isConst
     type(quad_1d), intent(in) :: u_quad
 
-    real(dp) :: S(0:leg_degree,0:leg_degree), scaling
+    real(dp) :: S(0:leg_degree,0:leg_degree), scaling, var_eval(2)
 
     real(dp), dimension(0:leg_degree) :: derivative_coefficients, tmp
     integer :: k
 
     scaling = 2.0_dp/(u_quad%rt_endpt - u_quad%lt_endpt)
+    var_eval = var_coeffs(2, (/u_quad%lt_endpt, u_quad%lt_endpt/))
 
     !apply S matrix and right endpoint correction
     S = diff_mat(num_nodes, leg_degree, u_quad, 0)
-    derivative_coefficients(:) = MATMUL(-1.0_dp*S,u_quad%a(:,1))
-    derivative_coefficients(:) = derivative_coefficients(:) + u_quad%rt_trace
 
-    !apply left endpt correction
-    do k = 0, leg_degree
-      derivative_coefficients(k) = derivative_coefficients(k) - (u_quad%lt_trace)*((-1.0_dp)**dble(k))
-    end do
+    if(isConst == 1) then
+      derivative_coefficients(:) = MATMUL(-1.0_dp*TRANSPOSE(S),u_quad%a(:,1))
+      derivative_coefficients(:) = derivative_coefficients(:) + u_quad%rt_trace
+
+      !apply left endpt correction
+      do k = 0, leg_degree
+        derivative_coefficients(k) = derivative_coefficients(k) - (u_quad%lt_trace)*((-1.0_dp)**dble(k))
+      end do
+    else 
+      derivative_coefficients(:) = MATMUL(S,u_quad%a(:,1))
+    endif
 
     !build vector defining M^-1
     do k=0, leg_degree
@@ -62,7 +68,7 @@ function derivative_coefficients(num_nodes, leg_degree, u_quad)
 
 end function derivative_coefficients
 
-function derivative_matrix(num_nodes, leg_degree, u_quad)
+function derivative_matrix(num_nodes, leg_degree, u_quad, isConst)
       ! ========================================================
       ! Inputs: - num_nodes  : number of nodes used in Gauss  
       !                        quadrature
@@ -71,12 +77,15 @@ function derivative_matrix(num_nodes, leg_degree, u_quad)
       !         - u_quad     : quad_1d containing information
       !              about the solution u in the
       !              current interval
+      !         - isConst    : integer, if value is 0 then
+      !                       assume constant coefficients.
+      !                       if 1 then variable coefficients
       !
       ! Output:   1D Array that represents the coefficients of
       !       the derivative of the solution u for the 
       !       transport equation.
       ! ========================================================
-    integer, intent(in) :: num_nodes, leg_degree 
+    integer, intent(in) :: num_nodes, leg_degree, isConst
     type(quad_1d), intent(in) :: u_quad
 
     real(dp) :: derivative_matrix(0:leg_degree,0:leg_degree), scaling
@@ -85,18 +94,21 @@ function derivative_matrix(num_nodes, leg_degree, u_quad)
     integer :: i, j 
 
     scaling = 2.0_dp/(u_quad%rt_endpt - u_quad%lt_endpt)
-
-    !apply S matrix and right endpoint correction
     derivative_matrix = diff_mat(num_nodes, leg_degree, u_quad, 0)
-    derivative_matrix(:,:) = -1.0_dp*derivative_matrix(:,:) + u_quad%rt_trace
 
-    !add left endpoint correction
-    do j=0, leg_degree
-      do i=0,leg_degree
-        derivative_matrix(i,j) =  derivative_matrix(i,j) - u_quad%lt_trace*((-1.0_dp)**(dble(i + j)))
+    if(isConst ==1) then
+      !apply S matrix and right endpoint correction
+      derivative_matrix(:,:) = -1.0_dp*TRANSPOSE(derivative_matrix(:,:)) + u_quad%rt_trace
+
+      !add left endpoint correction
+      do j=0, leg_degree
+        do i=0,leg_degree
+          derivative_matrix(i,j) =  derivative_matrix(i,j) - u_quad%lt_trace*((-1.0_dp)**(dble(i + j)))
+        end do
       end do
-    end do
+    endif
 
+    !build inverse of M
     do i = 0, leg_degree
       tmp(i) = 0.5_dp*(2.0_dp*dble(i) + 1.0_dp)
     end do
