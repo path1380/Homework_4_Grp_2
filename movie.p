@@ -77,13 +77,14 @@ while($line = <FILE> )
         rename("output_temp.txt", "sol_" . $counter . ".txt" ) || die ( "Error in renaming" );
         open(OUTFILE,"> $outFile4") || die "cannot open file!" ;
         $counter = $counter + 1;
-    }
+    } else{
     print OUTFILE $line;
+    }
 }
 close( OUTFILE );
 close(FILE);
 
-system("mv *.txt ... MovieData/");
+system("mv sol*.txt ... MovieData/");
 
 system("make -f Makefile_test_solver clean");
 
