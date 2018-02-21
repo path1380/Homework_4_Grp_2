@@ -1,1 +1,4 @@
-# Homework_4_Grp_2
+# Homework 4 - First DG Solver
+
+
+![Plot Animation](MovieData/plotgif.gif)
