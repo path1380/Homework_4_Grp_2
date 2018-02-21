@@ -26,8 +26,9 @@ module solver
   use coeff
   implicit none
 contains
-  subroutine solve_single_element(U, leg_degree, end_time, delta_t, num_time_steps, isConst)
+  subroutine solve_single_element(U, leg_degree, end_time, delta_t, num_time_steps, isConst, u_quad_init)
     real(dp), intent(in) :: end_time, delta_t
+    type(quad_1d), intent(in) :: u_quad_init
     type(quad_1d) :: u_quad
     integer, intent(in) :: leg_degree, isConst
     integer, intent(in) :: num_time_steps
@@ -36,19 +37,21 @@ contains
     integer :: i,j,num_nodes
     real(dp), dimension(0:leg_degree,0:leg_degree) :: A
     real(dp) :: u_endpt_vals(2), endpt_vals(2)
+    real(dp) :: lt_endpt, rt_endpt
     num_nodes=4*leg_degree+1
     
-    u_quad = element(LLLL,RRRR,leg_degree)
-    u_quad%nvars = 1
+    
 
-    U(:,0) = u_quad%a(:,1)
+    U(:,0) = u_quad_init%a
+    u_quad%lt_endpt = u_quad_init%lt_endpt
+    u_quad%rt_endpt = u_quad_init%rt_endpt
 
     !evaluate coefficients and u at endpoints and mat_build
     !trace values
-    endpt_vals = var_coeffs(2,(/LLLL, RRRR/))
-    u_endpt_vals = function_eval(2,(/LLLL, RRRR/))
-    u_quad%lt_trace = endpt_vals(1)*u_endpt_vals(1)
-    u_quad%rt_trace = endpt_vals(2)*u_endpt_vals(2)
+    endpt_vals = var_coeffs(2,(/u_quad_init%lt_endpt, u_quad_init%rt_endpt/))
+    u_endpt_vals = (/u_quad_init%lt_trace, u_quad_init%rt_trace/)
+    u_quad%lt_trace = u_endpt_vals(1)
+    u_quad%rt_trace = u_endpt_vals(2)
     
     A = -1.0_dp*derivative_matrix(num_nodes,leg_degree,u_quad, isConst)
     do i=1,num_time_steps
@@ -64,4 +67,28 @@ contains
     call deallocate_quad1d(u_quad)
   end subroutine solve_single_element
   
+  subroutine solve_multiple_elements(U, leg_degree, end_time, delta_t, num_time_steps, isConst, beta, domain_left_endpt, domain_right_endpt)
+    real(dp), intent(in) :: end_time, delta_t, beta, domain_left_endpt, domain_right_endpt
+    integer, intent(in) :: leg_degree, num_time_steps, isConst
+    real(dp), dimension(0:leg_degree, 0:num_time_steps, 1:num_elements), intent(out) :: U
+    integer :: i, j, num_elements
+    real(dp), dimension(0:leg_degree, 0:1) :: U_temp
+    real(dp), dimension(:), allocatable :: grd_pts
+    type(quad_1d) :: u_quad
+
+    u_quad%nvars = 1
+   
+    num_elements = NUMEL
+    allocate(grd_pts(0:num_elements))
+    grd_pts = GRDPTS
+
+    U_temp = 
+    do i=0,num_time_steps
+       do j=1,num_elements
+          u_quad = element(grd_pts(j-1), grd_pts(j), leg_degree)
+          !calculate trace values
+          call solve_single_element(U_temp, leg_degree, delta_t, delta_t, 1, isConst, u_quad)
+          U(:,i,j) = U_temp(:,1)
+          !end loops appropriately
+  end subroutine solve_multiple_elements
 end module solver

@@ -12,19 +12,31 @@ program test_solver
   implicit none
   
   real(dp) :: end_time, delta_t,Error, stepsize
+  type(quad_1d) :: u_quad
   real(dp), parameter :: lt_endpt = LLLL, rt_endpt = RRRR
   integer, parameter :: num_grdpts = 100
   integer :: leg_degree, num_time_steps, i, j, isConst
-  real(dp) :: endpt_vals(2)
+  real(dp) :: endpt_vals(2), u_endpt_vals(2)
   real(dp), dimension(:,:), allocatable :: U_coeff,U_exact_solution,U_solution
   !real(dp), allocatable :: x(:),w(:),tmp(:)
   real(dp), allocatable :: t(:)
   real(dp) :: sample_nodes(0:num_grdpts-1)
   
+
+
   end_time = TTTT
   delta_t = DTDT
   num_time_steps = MAXVAL((/CEILING(end_time/delta_t), 0/))
-  leg_degree = DDDD
+  leg_degree = DDDD 
+  u_quad = element(lt_endpt,rt_endpt,leg_degree)
+  u_quad%nvars = 1
+  u_quad%lt_endpt = lt_endpt
+  u_quad%rt_endpt = rt_endpt
+
+  u_endpt_vals = approx_eval(lt_endpt,rt_endpt,2,(/lt_endpt, rt_endpt/),&
+                                leg_degree,u_quad%a(:,u_quad%nvars))
+  u_quad%lt_trace = u_quad%a(0,u_quad%nvars)
+  u_quad%rt_trace = u_quad%a(leg_degree,u_quad%nvars)
   isConst = IIII
   endpt_vals(1) = lt_endpt
   endpt_vals(2) = rt_endpt
@@ -39,7 +51,7 @@ program test_solver
     sample_nodes(j) = lt_endpt + j*stepsize
   end do
 
-  call solve_single_element(U_coeff, leg_degree, end_time, delta_t, num_time_steps, isConst)
+  call solve_single_element(U_coeff, leg_degree, end_time, delta_t, num_time_steps, isConst, u_quad)
 
   !build exact solution to compare
   do j=0,num_time_steps
