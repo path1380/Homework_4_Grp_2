@@ -54,11 +54,16 @@ program test_solver
   end do
 
   !write(*,*) U_solution
-  Error = maxval(abs(U_exact_solution - U_solution))
-
-  do i = 0,num_time_steps
-    write(*,'((E24.16))') NORM2(U_exact_solution(:,i) - U_solution(:,i))
+  ! Error = maxval(abs(U_exact_solution - U_solution))
+  do j=0,num_time_steps
+    do i=0,num_grdpts-1
+      write(*,'((E24.16))') U_solution(i,j)
+    end do
+    write(*,'(A16)') 'BREAK'
   end do
+  ! do i = 0,num_time_steps
+  !   write(*,'((E24.16))') NORM2(U_exact_solution(:,i) - U_solution(:,i))
+  ! end do
   !write(*,*) 'The maximum Error is',Error
 
   ! do i=0,num_time_steps

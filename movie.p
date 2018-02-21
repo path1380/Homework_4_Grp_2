@@ -74,8 +74,16 @@ while($line = <FILE> )
 {
     if($line =~ /BREAK/){
         close( OUTFILE );
-        rename("output_temp.txt", "sol_" . $counter . ".txt" ) || die ( "Error in renaming" );
-        open(OUTFILE,"> $outFile4") || die "cannot open file!" ;
+        if($counter < 10){
+            rename("output_temp.txt", "sol_00" . $counter . ".txt" ) || die ( "Error in renaming" );
+            open(OUTFILE,"> $outFile4") || die "cannot open file!" ;
+        } elsif (10<= $counter & $counter <= 99){
+            rename("output_temp.txt", "sol_0" . $counter . ".txt" ) || die ( "Error in renaming" );
+            open(OUTFILE,"> $outFile4") || die "cannot open file!" ;
+        } else{
+            rename("output_temp.txt", "sol_" . $counter . ".txt" ) || die ( "Error in renaming" );
+            open(OUTFILE,"> $outFile4") || die "cannot open file!" ;
+        }
         $counter = $counter + 1;
     } else{
     print OUTFILE $line;
