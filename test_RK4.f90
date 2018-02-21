@@ -34,4 +34,7 @@ program test_RK4
   do i=0,9
      write(*,*) u(i)
   end do
+  do i=0,9
+     write(*,*) Q(i,:)
+  end do
 end program test_RK4
