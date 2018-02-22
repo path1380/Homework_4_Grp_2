@@ -77,7 +77,7 @@ contains
     real(dp), dimension(0:leg_degree, 0:1) :: U_temp
     real(dp), dimension(:), allocatable :: grd_pts
     type(quad_1d), dimension(:), allocatable :: elem_array
-    real(dp) :: u_endpt_vals(2), endpt_vals(0:num_elements), tmp, space_step
+    real(dp) :: u_endpt_vals(2), endpt_vals(0:num_elements), tmp, space_step, tmp2
 
 
     ALLOCATE(elem_array(1:num_elements))
@@ -111,13 +111,17 @@ contains
     do i=1,num_time_steps
 
         !store the previous trace value as we overwrite
-        tmp = elem_array(1)%rt_trace
-        
-        elem_array(1)%rt_trace =  beta*elem_array(1)%rt_trace + (1.0_dp - beta)*elem_array(2)%lt_trace
+        tmp = elem_array(1)%lt_trace
+        tmp2 = elem_array(num_elements)%rt_trace
+        !elem_array(1)%rt_trace =  beta*elem_array(1)%rt_trace + (1.0_dp - beta)*elem_array(2)%lt_trace
         !call solve_single_element(U(:,i-1:i,1), leg_degree, delta_t, delta_t, 1, isConst, elem_array(i))
 
+        elem_array(1)%lt_trace = beta*tmp + (1.0_dp-beta)*tmp2
+        elem_array(num_elements)%rt_trace = beta*tmp2 + (1.0_dp-beta)*tmp
+
+        tmp = elem_array(1)%rt_trace
       !do work for middle elements
-       do j=2,num_elements-1
+       do j=2,num_elements
           !compute numerical flux for each element
           elem_array(j)%lt_trace =  beta*elem_array(j)%lt_trace + (1.0_dp - beta)*tmp
           tmp = elem_array(j)%rt_trace
@@ -129,7 +133,7 @@ contains
         end do
 
         !account for end element
-        elem_array(num_elements)%lt_trace = beta*elem_array(num_elements-1)%lt_trace + (1.0_dp - beta)*tmp
+        !elem_array(num_elements)%lt_trace = beta*elem_array(num_elements-1)%lt_trace + (1.0_dp - beta)*tmp
 
 
       do j=1,num_elements
