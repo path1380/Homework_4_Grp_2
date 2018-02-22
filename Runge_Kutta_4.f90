@@ -9,9 +9,9 @@
 module Runge_Kutta_4
   use type_defs
   !use InputControl.Template
-  use lgl
+  !use lgl
   !use quad_1dmod
-  use leg_funs
+  !use leg_funs
   implicit none
 contains
   function RK4(leg_degree,Delta_t,Q,u0,ti,tf)
@@ -31,10 +31,10 @@ contains
     u=u0
     do i=1,N
        k1=MATMUL(Q,u)
-       k2=MATMUL(Q,u+(Delta_t*k1/2))
-       k3=MATMUL(Q,u+(Delta_t*k2/2))
+       k2=MATMUL(Q,u+0.5_dp*(Delta_t*k1))
+       k3=MATMUL(Q,u+0.5_dp*(Delta_t*k2))
        k4=MATMUL(Q,u+(Delta_t*k3))
-       u=u+(Delta_t*(k1+(2*k2)+(2*k3)+k4)/6)
+       u=u+(Delta_t*(k1+(2.0_dp*k2)+(2.0_dp*k3)+k4)/6.0_dp)
     end do
     RK4=u
   end function RK4

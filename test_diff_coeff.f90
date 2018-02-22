@@ -7,9 +7,11 @@ program test_diff_coeff
   integer, parameter :: num_nodes = 10, leg_degree = 3
   !real(dp), parameter :: lt_endpt = -ACOS(-1.0_dp), rt_endpt = ACOS(1.0_dp)
   real(dp), parameter :: lt_endpt = -1.0_dp, rt_endpt = 1.0_dp
+  integer :: i
 
   type(quad_1d) :: u_quad
   real(dp), dimension(0:leg_degree) :: coeffs
+  real(dp), dimension(0:leg_degree,0:leg_degree) :: der_mat
 
   !define a quad with the function u(x,t) = 1
   u_quad%nvars = 1
@@ -25,12 +27,12 @@ program test_diff_coeff
 
   !setting the trace equal to 0 reduces down to constant coefficients
   u_quad%lt_trace = 0.0_dp
-  u_quad%rt_trace = 0.0_dp
+  u_quad%rt_trace = 1.0_dp
 
-  coeffs = derivative_coefficients(num_nodes, leg_degree, u_quad)
-  coeffs = -1.0_dp*coeffs(:)
+  der_mat = derivative_matrix(num_nodes, leg_degree, u_quad)
+  do i=0,3
+    write(*,*) der_mat(i,:)
+  end do
   call deallocate_quad1d(u_quad)
-
-  write(*,*) coeffs
 
 end program test_diff_coeff
