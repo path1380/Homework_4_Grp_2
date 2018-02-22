@@ -19,14 +19,14 @@ $delta_t = "0.002";
 @array_beta = ("0.0_dp","0.5_dp","1.0_dp");
 $IC = "SIN(grd_pts)";
 for($p = 0; $p < 3; $p = $p + 1){
-for( $q = 2; $q < 16; $q = $q + 1){
+for( $q = 0; $q < 14; $q = $q + 1){
 	open(FILE,"$cmdFile") || die "cannot open file $cmdFile!" ;
       
        open(OUTFILE,"> $outFile") || die "cannot open file!" ;
        while( $line = <FILE> )
         {
         #Replace the strings by using substitution
-        $line =~ s/\bIIII\b/$array_num_elements[$q-2]/;
+        $line =~ s/\bIIII\b/$array_num_elements[$q]/;
         $line =~ s/\bDDDD\b/$leg_degree/;
         $line =~ s/\bFFFF\b/$IC/;
         $line =~ s/\bVVVV\b/$var_coeff/;
@@ -47,7 +47,7 @@ for( $q = 2; $q < 16; $q = $q + 1){
         $line =~ s/\bRRRR\b/$rt_endpt/;
         $line =~ s/\bIIII\b/$isConst/;
         $line =~ s/\bBETA\b/$array_beta[p]/;
-        $line =~ s/\bNUMEL\b/$num_elements/;
+        $line =~ s/\bNUMEL\b/$array_num_elements[$q]/;
         $line =~ s/\bETET\b/$end_time/;
 
         print OUTFILE $line;
@@ -60,14 +60,14 @@ for( $q = 2; $q < 16; $q = $q + 1){
         {
         $line =~ s/\bLLLL\b/$lt_endpt/;
         $line =~ s/\bRRRR\b/$rt_endpt/;
-        $line =~ s/\bNUMEL\b/$array_num_elements[$q-2]/;
+        $line =~ s/\bNUMEL\b/$array_num_elements[$q]/;
 
         print OUTFILE $line;
         }
         close( OUTFILE );
         close(FILE);
         system("make -f Makefile_test_solver");
-        system("./test_solver.x > output.txt");
+        system("./test_solver_multiple.x > output.txt");
         $beta = $p / 2;
         rename("output.txt", "output_beta=" . $beta . "_num_elts=" . $q . ".txt" ) || die ( "Error in renaming" );
 
