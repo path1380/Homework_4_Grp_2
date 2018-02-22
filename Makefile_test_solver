@@ -1,8 +1,8 @@
 FC = gfortran
 LD = gfortran
 F90FLAGS = -fbounds-check -fbacktrace -g
-OBJECTS = type_defs.o quad_1dmod.o InputControl.o lgl.o leg_funs.o approx_funs.o mat_builder.o diff_coeff.o coeff.o Runge_Kutta_4.o solver.o test_solver.o
-EXECUTABLE = test_solver.x
+OBJECTS = type_defs.o quad_1dmod.o InputControl.o lgl.o leg_funs.o approx_funs.o mat_builder.o diff_coeff.o coeff.o Runge_Kutta_4.o solver.o test_solver_multiple.o
+EXECUTABLE = test_solver_multiple.x
 
 .PHONY: clean
 $(EXECUTABLE): $(OBJECTS)
