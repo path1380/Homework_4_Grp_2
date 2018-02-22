@@ -1,6 +1,6 @@
 $cmdFile="./InputControl.Template2.f90";
 $outFile="./InputControl.f90";
-$cmdFile2="./test_solver.Template.f90";
+$cmdFile2="./test_solver_multiple.Template.f90";
 $outFile2="./test_solver.f90";
 $cmdFile3="./solver.Template.f90";
 $outFile3="./solver.f90";

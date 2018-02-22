@@ -46,7 +46,7 @@ for( $q = 0; $q < 14; $q = $q + 1){
         $line =~ s/\bLLLL\b/$lt_endpt/;
         $line =~ s/\bRRRR\b/$rt_endpt/;
         $line =~ s/\bIIII\b/$isConst/;
-        $line =~ s/\bBETA\b/$array_beta[p]/;
+        $line =~ s/\bBETA\b/$array_beta[$p]/;
         $line =~ s/\bNUMEL\b/$array_num_elements[$q]/;
         $line =~ s/\bETET\b/$end_time/;
 
@@ -69,10 +69,18 @@ for( $q = 0; $q < 14; $q = $q + 1){
         system("make -f Makefile_test_solver");
         system("./test_solver_multiple.x > output.txt");
         $beta = $p / 2;
-        rename("output.txt", "output_beta=" . $beta . "_num_elts=" . $q . ".txt" ) || die ( "Error in renaming" );
+        $temp = $q + 2;
+        if($temp <=9){
+        rename("output.txt", "output_beta=" . $beta . "_num_elts=0" . $temp . ".txt" ) || die ( "Error in renaming" );
+        } else{
+    
+        rename("output.txt", "output_beta=" . $beta . "_num_elts=" . $temp . ".txt" ) || die ( "Error in renaming" );
+}
 
         system("make -f Makefile_test_solver clean");
 
 
 	}
 }
+        system("matlab \"$@\" -nosplash -nodisplay < finalPlot.m");
+        system("rm output_beta*");
